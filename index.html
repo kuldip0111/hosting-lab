@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hosting Lab — Learn Static Website Hosting</title>
+<meta name="description" content="A single-file interactive website for learning how static websites are hosted and deployed.">
+<style>
+:root{
+  --bg:#0b1020;--panel:#121a2d;--panel2:#18233b;--text:#edf3ff;--muted:#a9b5cc;
+  --accent:#65d6ff;--accent2:#8b7cff;--green:#4ade80;--yellow:#fbbf24;--red:#fb7185;
+  --border:#293752;--code:#080d18;--shadow:0 18px 50px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box;scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(circle at 20% 0%,#182850 0,#0b1020 35%),var(--bg);
+color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.6}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+.container{width:min(1120px,92%);margin:auto}
+nav{position:sticky;top:0;z-index:20;background:rgba(11,16,32,.86);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{height:68px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{font-weight:900;letter-spacing:-.5px}.logo span{color:var(--accent)}
+.navlinks{display:flex;gap:18px;align-items:center;font-size:14px;color:var(--muted)}
+.navlinks a:hover{color:white}
+.hero{padding:90px 0 65px;text-align:center}
+.badge{display:inline-flex;gap:8px;align-items:center;border:1px solid #31547a;background:#10223a;color:#9fe7ff;padding:7px 12px;border-radius:999px;font-size:13px}
+h1{font-size:clamp(42px,7vw,78px);line-height:1.02;margin:20px 0 18px;letter-spacing:-3px}
+.gradient{background:linear-gradient(90deg,var(--accent),#a99cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:760px;margin:auto;color:var(--muted);font-size:18px}
+.actions{display:flex;justify-content:center;gap:12px;margin-top:28px;flex-wrap:wrap}
+.btn{border:1px solid var(--border);background:var(--panel);color:white;padding:11px 17px;border-radius:10px;cursor:pointer;font-weight:700}
+.btn.primary{background:linear-gradient(135deg,#31bde9,#7065ed);border:0}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.08)}
+section{padding:58px 0;scroll-margin-top:70px}
+.section-title{font-size:31px;margin:0 0 8px}.section-sub{color:var(--muted);margin:0 0 28px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:linear-gradient(145deg,var(--panel),#0f1728);border:1px solid var(--border);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+.card h3{margin:5px 0 8px}.card p{color:var(--muted);margin:0}
+.icon{font-size:30px}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:stretch}
+.step{background:var(--panel);border:1px solid var(--border);padding:18px;border-radius:14px;position:relative}
+.step:not(:last-child)::after{content:"→";position:absolute;right:-15px;top:38%;color:var(--accent);font-weight:900;z-index:2}
+.num{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#203451;color:var(--accent);font-weight:800}
+.step h3{font-size:16px}.step p{font-size:13px;color:var(--muted)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tab{background:var(--panel);border:1px solid var(--border);color:var(--muted);padding:9px 13px;border-radius:8px;cursor:pointer}
+.tab.active{color:white;border-color:#4b6f9d;background:#182b48}
+pre{margin:0;background:var(--code);border:1px solid var(--border);padding:18px;border-radius:12px;overflow:auto;color:#dbeafe;font-size:13px;line-height:1.55}
+.code-wrap{position:relative}.copy{position:absolute;right:10px;top:10px}
+.host-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.host{cursor:pointer}.host.active{border-color:var(--accent);box-shadow:0 0 0 1px #65d6ff33,var(--shadow)}
+.host strong{display:block;margin-bottom:4px}.host small{color:var(--muted)}
+.host-details{margin-top:18px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px}
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.check{display:flex;gap:10px;align-items:flex-start;background:var(--panel);border:1px solid var(--border);padding:13px;border-radius:10px}
+.check input{margin-top:5px;accent-color:var(--green)}
+.progress{height:9px;background:#202b42;border-radius:99px;overflow:hidden;margin:10px 0 20px}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--accent));transition:.3s}
+.quiz{display:grid;gap:12px}.question{background:var(--panel);padding:18px;border:1px solid var(--border);border-radius:12px}
+.option{display:block;margin:7px 0;padding:8px 10px;border:1px solid var(--border);border-radius:8px;cursor:pointer}
+.option:hover{background:var(--panel2)}
+.result{margin-top:15px;font-weight:700}
+.faq details{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:15px 18px;margin:9px 0}
+.faq summary{cursor:pointer;font-weight:700}.faq p{color:var(--muted)}
+.timeline{border-left:2px solid #35527a;margin-left:10px;padding-left:25px}
+.timeline div{position:relative;margin-bottom:23px}.timeline div::before{content:"";position:absolute;left:-33px;top:6px;width:13px;height:13px;background:var(--accent);border-radius:50%;box-shadow:0 0 0 4px #162842}
+footer{border-top:1px solid var(--border);padding:30px 0;color:var(--muted);text-align:center}
+.toast{position:fixed;bottom:22px;right:22px;background:#15253e;border:1px solid #456489;padding:12px 16px;border-radius:10px;transform:translateY(120px);transition:.3s;z-index:50}.toast.show{transform:translateY(0)}
+@media(max-width:850px){.grid,.host-grid{grid-template-columns:1fr 1fr}.flow{grid-template-columns:1fr 1fr}.step:not(:last-child)::after{display:none}}
+@media(max-width:600px){.navlinks{display:none}.hero{padding-top:60px}.grid,.host-grid,.checklist{grid-template-columns:1fr}h1{letter-spacing:-2px}.flow{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#top">Hosting<span>Lab</span></a>
+    <div class="navlinks">
+      <a href="#basics">Basics</a><a href="#flow">Flow</a><a href="#hosts">Hosts</a>
+      <a href="#deploy">Deploy</a><a href="#quiz">Quiz</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="container">
+    <div class="badge">🚀 Single-file hosting playground</div>
+    <h1>Learn how your website<br><span class="gradient">gets online.</span></h1>
+    <p>Understand domains, DNS, servers, HTTP, static hosting, deployment, HTTPS, caching and the complete journey from <b>your computer → the internet → a visitor's browser.</b></p>
+    <div class="actions">
+      <a class="btn primary" href="#basics">Start learning ↓</a>
+      <button class="btn" onclick="downloadThisPage()">Download HTML</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+<section id="basics">
+  <h2 class="section-title">1. What is hosting?</h2>
+  <p class="section-sub">Hosting means making your website's files available from a computer connected to the internet.</p>
+  <div class="grid">
+    <div class="card"><div class="icon">💻</div><h3>Your code</h3><p>HTML creates structure, CSS creates appearance, and JavaScript adds behavior. On a static site, the browser can use these files directly.</p></div>
+    <div class="card"><div class="icon">🗄️</div><h3>Web server</h3><p>A server stores your files and responds to HTTP/HTTPS requests when someone asks for your website.</p></div>
+    <div class="card"><div class="icon">🌐</div><h3>Domain</h3><p>A domain such as <b>example.com</b> is a human-friendly name. DNS connects that name to the infrastructure serving your site.</p></div>
+  </div>
+</section>
+
+<section id="flow">
+  <h2 class="section-title">2. What happens when someone opens your site?</h2>
+  <p class="section-sub">Follow one request from the browser to your HTML.</p>
+  <div class="flow">
+    <div class="step"><div class="num">1</div><h3>Browser</h3><p>User enters example.com.</p></div>
+    <div class="step"><div class="num">2</div><h3>DNS</h3><p>Domain is resolved to the hosting destination.</p></div>
+    <div class="step"><div class="num">3</div><h3>HTTPS</h3><p>Browser establishes a secure connection.</p></div>
+    <div class="step"><div class="num">4</div><h3>Server/CDN</h3><p>Hosting infrastructure finds your files.</p></div>
+    <div class="step"><div class="num">5</div><h3>Browser</h3><p>HTML, CSS and JS are downloaded and rendered.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">3. Static vs dynamic websites</h2>
+  <p class="section-sub">This file is a static website.</p>
+  <div class="grid">
+    <div class="card"><h3>📄 Static</h3><p>Pre-created files: HTML, CSS, JS, images. Great for portfolios, documentation, landing pages and learning projects.</p></div>
+    <div class="card"><h3>⚙️ Dynamic</h3><p>A server executes application code and may talk to a database. Examples include many e-commerce and CMS applications.</p></div>
+    <div class="card"><h3>🔌 API-backed</h3><p>The frontend can still be static while JavaScript calls APIs hosted elsewhere for login, data, payments, search, etc.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">4. Learn the files</h2>
+  <div class="tabs">
+    <button class="tab active" data-code="html">HTML</button>
+    <button class="tab" data-code="css">CSS</button>
+    <button class="tab" data-code="js">JavaScript</button>
+  </div>
+  <div class="code-wrap"><button class="btn copy" onclick="copyCode()">Copy</button><pre id="code"></pre></div>
+</section>
+
+<section id="hosts">
+  <h2 class="section-title">5. Where can you host it?</h2>
+  <p class="section-sub">Click a provider to understand the general deployment model. Exact free-tier limits and features can change over time.</p>
+  <div class="host-grid">
+    <div class="card host active" data-host="github"><strong>🐙 GitHub Pages</strong><small>Repository → Pages → public site</small></div>
+    <div class="card host" data-host="netlify"><strong>▲ Netlify</strong><small>Connect repo → build/deploy</small></div>
+    <div class="card host" data-host="vercel"><strong>▲ Vercel</strong><small>Import project → deploy</small></div>
+    <div class="card host" data-host="azure"><strong>☁️ Azure Static Web Apps</strong><small>Repo → workflow → Azure</small></div>
+  </div>
+  <div class="host-details" id="hostDetails"></div>
+</section>
+
+<section id="deploy">
+  <h2 class="section-title">6. Deployment checklist</h2>
+  <p class="section-sub">Complete the checklist. Your progress is saved in this browser.</p>
+  <div class="progress"><span id="progressBar"></span></div>
+  <div id="progressText" style="color:var(--muted);margin-bottom:15px"></div>
+  <div class="checklist">
+    <label class="check"><input type="checkbox" data-check> Create <b>index.html</b></label>
+    <label class="check"><input type="checkbox" data-check> Test it locally in a browser</label>
+    <label class="check"><input type="checkbox" data-check> Create a Git repository</label>
+    <label class="check"><input type="checkbox" data-check> Push your code to the repository</label>
+    <label class="check"><input type="checkbox" data-check> Choose a static hosting provider</label>
+    <label class="check"><input type="checkbox" data-check> Deploy the site</label>
+    <label class="check"><input type="checkbox" data-check> Open the generated public URL</label>
+    <label class="check"><input type="checkbox" data-check> Configure a custom domain if needed</label>
+    <label class="check"><input type="checkbox" data-check> Verify HTTPS</label>
+    <label class="check"><input type="checkbox" data-check> Update → commit → push → redeploy</label>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">7. Git deployment commands</h2>
+  <p class="section-sub">A common workflow when your hosting provider deploys from Git.</p>
+  <div class="code-wrap"><button class="btn copy" onclick="copyGit()">Copy</button><pre id="gitCode"># 1. Go to your project
+cd my-static-site
+
+# 2. Create a Git repository
+git init
+
+# 3. Save your files
+git add .
+git commit -m "Initial static site"
+
+# 4. Connect your GitHub repository
+git remote add origin https://github.com/YOUR_USERNAME/my-static-site.git
+
+# 5. Push
+git branch -M main
+git push -u origin main
+
+# After future changes:
+git add .
+git commit -m "Update website"
+git push</pre></div>
+</section>
+
+<section>
+  <h2 class="section-title">8. Important hosting concepts</h2>
+  <div class="grid">
+    <div class="card"><h3>DNS</h3><p>DNS translates names such as <b>my-site.com</b> into information used to locate the service handling that domain.</p></div>
+    <div class="card"><h3>HTTP / HTTPS</h3><p>HTTP is the web protocol. HTTPS adds encryption and server identity verification using TLS.</p></div>
+    <div class="card"><h3>CDN</h3><p>A Content Delivery Network can cache and serve static assets from locations closer to visitors.</p></div>
+    <div class="card"><h3>DNS records</h3><p><b>A/AAAA</b> can point a domain to IP addresses; <b>CNAME</b> can point a name to another hostname. Providers may require different records.</p></div>
+    <div class="card"><h3>Build</h3><p>Some sites need a build step such as <b>npm run build</b>. The resulting output folder is what gets deployed.</p></div>
+    <div class="card"><h3>Cache</h3><p>Browsers and CDNs may cache assets. Cache headers and versioned filenames help control when updated files are fetched.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">9. From local machine to production</h2>
+  <div class="timeline">
+    <div><b>Write</b><br><span style="color:var(--muted)">Create index.html, styles and scripts.</span></div>
+    <div><b>Test</b><br><span style="color:var(--muted)">Open locally and check mobile/desktop behavior.</span></div>
+    <div><b>Version</b><br><span style="color:var(--muted)">Commit your changes with Git.</span></div>
+    <div><b>Deploy</b><br><span style="color:var(--muted)">Upload files or connect your repository to a host.</span></div>
+    <div><b>Domain</b><br><span style="color:var(--muted)">Optionally connect your own domain using the provider's DNS instructions.</span></div>
+    <div><b>Maintain</b><br><span style="color:var(--muted)">Change code → commit → push → deployment updates the public site.</span></div>
+  </div>
+</section>
+
+<section id="quiz">
+  <h2 class="section-title">10. Quick quiz</h2>
+  <p class="section-sub">Check whether the core concepts are clear.</p>
+  <div class="quiz">
+    <div class="question"><b>1. What is the main purpose of DNS?</b>
+      <label class="option"><input type="radio" name="q1" value="0"> Store your HTML</label>
+      <label class="option"><input type="radio" name="q1" value="1"> Help map domain names to internet destinations</label>
+      <label class="option"><input type="radio" name="q1" value="0"> Compile JavaScript</label>
+    </div>
+    <div class="question"><b>2. Which file is normally the entry point of a simple static site?</b>
+      <label class="option"><input type="radio" name="q2" value="1"> index.html</label>
+      <label class="option"><input type="radio" name="q2" value="0"> database.sql</label>
+      <label class="option"><input type="radio" name="q2" value="0"> server.exe</label>
+    </div>
+    <div class="question"><b>3. What does HTTPS provide?</b>
+      <label class="option"><input type="radio" name="q3" value="0"> Free domain registration</label>
+      <label class="option"><input type="radio" name="q3" value="1"> Encrypted HTTP communication using TLS</label>
+      <label class="option"><input type="radio" name="q3" value="0"> A database</label>
+    </div>
+    <div class="question"><b>4. If your static host deploys from Git, what commonly triggers a new deployment?</b>
+      <label class="option"><input type="radio" name="q4" value="1"> Pushing a new commit</label>
+      <label class="option"><input type="radio" name="q4" value="0"> Restarting your monitor</label>
+      <label class="option"><input type="radio" name="q4" value="0"> Changing your browser zoom</label>
+    </div>
+  </div>
+  <button class="btn primary" style="margin-top:18px" onclick="checkQuiz()">Check answers</button>
+  <div class="result" id="quizResult"></div>
+</section>
+
+<section class="faq">
+  <h2 class="section-title">11. Common questions</h2>
+  <details><summary>Can I host this exact file for free?</summary><p>Yes. Many static hosting services can serve a single HTML file. Free plans and their limits vary, so check the current provider documentation before choosing one.</p></details>
+  <details><summary>Do I need a backend for this website?</summary><p>No. Everything in this page runs in your browser. A backend becomes useful when you need server-side logic, authentication, databases, private secrets, or APIs you cannot safely expose to the browser.</p></details>
+  <details><summary>Can I put API keys inside this HTML?</summary><p>Do not put private API keys or secrets in frontend JavaScript. Anything shipped to a browser should be considered visible to the user. Use a backend/serverless function for secrets.</p></details>
+  <details><summary>What should I learn next?</summary><p>Learn Git/GitHub → DNS → HTTP/HTTPS → domains → CDN/caching → CI/CD → serverless/backend deployment → Docker → cloud services.</p></details>
+</section>
+</main>
+
+<footer>
+  <div class="container">Hosting Lab · Built as one HTML file · <span id="year"></span></div>
+</footer>
+<div class="toast" id="toast">Copied!</div>
+
+<script>
+const snippets={
+html:`<!DOCTYPE html>
+<html>
+<head>
+  <title>My Site</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Hello, world!</h1>
+  <script src="script.js"><\\/script>
+</body>
+</html>`,
+css:`body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f5f7fb;
+  color: #111827;
+}
+
+h1 {
+  text-align: center;
+  padding: 50px;
+}`,
+js:`const title = document.querySelector("h1");
+
+title.addEventListener("click", () => {
+  title.textContent = "You clicked me!";
+});`
+};
+
+const hostInfo={
+github:`<h3>🐙 GitHub Pages</h3><p>Typical flow: create a GitHub repository → push <b>index.html</b> → enable the repository's Pages feature → choose the deployment source → open the generated site URL.</p><p><b>Best concept to learn:</b> Git-based deployment and repository-driven hosting.</p>`,
+netlify:`<h3>▲ Netlify</h3><p>Typical flow: connect a Git repository → choose the project/build settings if needed → deploy → each relevant repository update can trigger a new deployment.</p><p><b>Best concept to learn:</b> continuous deployment for frontend projects.</p>`,
+vercel:`<h3>▲ Vercel</h3><p>Typical flow: import a repository → configure the framework/build if necessary → deploy → receive a deployment URL and optionally attach a domain.</p><p><b>Best concept to learn:</b> modern frontend deployment and preview deployments.</p>`,
+azure:`<h3>☁️ Azure Static Web Apps</h3><p>Typical flow: create a Static Web Apps resource → connect your source repository → configure the application/output settings → let the workflow build and deploy it.</p><p><b>Best concept to learn:</b> cloud hosting integrated with CI/CD.</p>`
+};
+
+const code=document.getElementById("code");
+code.textContent=snippets.html;
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    code.textContent=snippets[tab.dataset.code];
+  });
+});
+function toast(msg="Copied!"){
+  const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),1400);
+}
+async function copyText(text){
+  try{await navigator.clipboard.writeText(text);toast();}
+  catch(e){toast("Copy unavailable");}
+}
+function copyCode(){copyText(code.textContent)}
+function copyGit(){copyText(document.getElementById("gitCode").textContent)}
+
+function downloadThisPage(){
+  const blob=new Blob([document.documentElement.outerHTML],{type:"text/html"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="hosting-lab.html";a.click();
+  URL.revokeObjectURL(a.href);toast("HTML downloaded");
+}
+
+document.querySelectorAll(".host").forEach(card=>{
+  card.addEventListener("click",()=>{
+    document.querySelectorAll(".host").forEach(c=>c.classList.remove("active"));
+    card.classList.add("active");
+    document.getElementById("hostDetails").innerHTML=hostInfo[card.dataset.host];
+  });
+});
+document.getElementById("hostDetails").innerHTML=hostInfo.github;
+
+const checks=[...document.querySelectorAll("[data-check]")];
+checks.forEach((c,i)=>{
+  c.checked=localStorage.getItem("hosting-check-"+i)==="1";
+  c.addEventListener("change",()=>{localStorage.setItem("hosting-check-"+i,c.checked?"1":"0");updateProgress();});
+});
+function updateProgress(){
+  const done=checks.filter(c=>c.checked).length,total=checks.length,p=Math.round(done/total*100);
+  document.getElementById("progressBar").style.width=p+"%";
+  document.getElementById("progressText").textContent=`${done} / ${total} completed (${p}%)`;
+}
+updateProgress();
+
+function checkQuiz(){
+  let score=0;
+  ["q1","q2","q3","q4"].forEach(q=>{
+    const selected=document.querySelector(`input[name="${q}"]:checked`);
+    if(selected && selected.value==="1")score++;
+  });
+  const r=document.getElementById("quizResult");
+  r.textContent=`Score: ${score}/4 ${score===4?"🎉 Excellent!":"Keep learning — review the sections above and try again."}`;
+  r.style.color=score===4?"var(--green)":"var(--yellow)";
+}
+document.getElementById("year").textContent=new Date().getFullYear();
+</script>
+</body>
+</html>
